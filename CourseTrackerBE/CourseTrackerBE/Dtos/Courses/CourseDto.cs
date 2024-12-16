@@ -1,10 +1,9 @@
-﻿namespace CourseTrackerBE.Models;
+﻿namespace CourseTrackerBE.Dtos.Courses;
 
-public class Course
+public class CourseDto
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public DateTime StartDate { get; set; }
-    public User? Instructor { get; set; }
 }

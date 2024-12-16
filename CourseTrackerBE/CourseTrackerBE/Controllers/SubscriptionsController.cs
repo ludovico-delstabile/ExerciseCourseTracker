@@ -1,4 +1,6 @@
-﻿using CourseTrackerBE.DataAccess;
+﻿using AutoMapper;
+using CourseTrackerBE.DataAccess;
+using CourseTrackerBE.Dtos.Subscriptions;
 using CourseTrackerBE.Models;
 using CourseTrackerBE.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -10,19 +12,22 @@ namespace CourseTrackerBE.Controllers
     public class SubscriptionsController : ControllerBase
     {
         private readonly ILiteDbContext _db;
+        private readonly IMapper _mapper;
         private readonly SubscriptionsService _subscriptionsService;
 
-        public SubscriptionsController(ILiteDbContext db, SubscriptionsService subscriptionsService)
+        public SubscriptionsController(ILiteDbContext db, IMapper mapper, SubscriptionsService subscriptionsService)
         {
             _db = db;
+            _mapper = mapper;
             _subscriptionsService = subscriptionsService;
         }
 
         [HttpGet(Name = "GetSubscriptions")]
-        public ActionResult<IEnumerable<Course>> GetCourses()
+        public ActionResult<IEnumerable<SubscriptionDto>> GetSubscriptions()
         {
             // TODO Get current User and filter by userId
-            return Ok(_db.Courses.Query().ToEnumerable());
+            var subscriptions = _db.Subscriptions.Query().ToEnumerable();
+            return Ok(_mapper.Map<IEnumerable<SubscriptionDto>>(subscriptions));
         }
 
         [HttpPost("Subscribe", Name = "SubscribeCourse")]

@@ -1,8 +1,10 @@
 ﻿using CourseTrackerBE.DataAccess;
-using CourseTrackerBE.Dtos;
+using CourseTrackerBE.Dtos.Login;
 using CourseTrackerBE.Models;
+using CourseTrackerBE.Options;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -14,13 +16,13 @@ namespace CourseTrackerBE.Controllers;
 [ApiController]
 public class AuthController : ControllerBase
 {
-    private readonly IConfiguration _configuration;
     private readonly ILiteDbContext _db;
+    private readonly AuthOptions _options;
 
-    public AuthController(IConfiguration configuration, ILiteDbContext db)
+    public AuthController(ILiteDbContext db, IOptions<AuthOptions> options)
     {
-        _configuration = configuration;
         _db = db;
+        _options = options.Value;
     }
 
     [HttpPost("login")]
@@ -32,13 +34,15 @@ public class AuthController : ControllerBase
             var verifyPwdResult = hasher.VerifyHashedPassword(user, user.HashedPassword, request.Password);
             if (verifyPwdResult == PasswordVerificationResult.Success)
             {
-                var claims = new[] { new Claim(ClaimTypes.Name, user.Username) };
+                var claims = new[] {
+                    new Claim(ClaimTypes.Name, user.Username),
+                };
 
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("yourSecretKey"));
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey));
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
                 var token = new JwtSecurityToken(
-                    issuer: "yourIssuer",
-                    audience: "yourAudience",
+                    issuer: _options.Issuer,
+                    audience: _options.Audience,
                     claims: claims,
                     expires: DateTime.Now.AddDays(1),
                     signingCredentials: creds

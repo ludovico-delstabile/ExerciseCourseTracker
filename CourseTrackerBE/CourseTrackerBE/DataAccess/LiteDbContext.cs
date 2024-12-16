@@ -26,6 +26,7 @@ public class LiteDbContext : ILiteDbContext
     private void Configure()
     {
         BsonMapper.Global.Entity<Subscription>().DbRef(x => x.Course, "courses");
+        BsonMapper.Global.Entity<Course>().DbRef(x => x.Instructor, "users");
     }
 
     private void Seed()

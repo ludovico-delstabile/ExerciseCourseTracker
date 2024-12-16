@@ -1,4 +1,6 @@
-﻿using CourseTrackerBE.DataAccess;
+﻿using AutoMapper;
+using CourseTrackerBE.DataAccess;
+using CourseTrackerBE.Dtos.Courses;
 using CourseTrackerBE.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,24 +11,27 @@ namespace CourseTrackerBE.Controllers
     public class CoursesController : ControllerBase
     {
         private readonly ILiteDbContext _db;
+        private readonly IMapper _mapper;
 
-        public CoursesController(ILiteDbContext db)
+        public CoursesController(ILiteDbContext db, IMapper mapper)
         {
             _db = db;
+            _mapper = mapper;
         }
 
         [HttpGet(Name = "GetCourses")]
-        public ActionResult<IEnumerable<Course>> GetCourses()
+        public ActionResult<IEnumerable<CourseDto>> GetCourses()
         {
-            return Ok(_db.Courses.Query().ToEnumerable());
+            var courses = _db.Courses.Query().ToEnumerable();
+            return Ok(_mapper.Map<IEnumerable<CourseDto>>(courses));
         }
 
         [HttpPost(Name = "AddCourse")]
-        public ActionResult<Course> AddCourse([FromBody] Course course)
+        public ActionResult<CourseDto> AddCourse([FromBody] CourseDto course)
         {
-            var id = _db.Courses.Insert(course);
+            var id = _db.Courses.Insert(_mapper.Map<Course>(course));
             var res = _db.Courses.FindById(id);
-            return Ok(res);
+            return Ok(_mapper.Map<CourseDto>(res));
         }
     }
 }

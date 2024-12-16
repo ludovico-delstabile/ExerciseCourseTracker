@@ -1,4 +1,6 @@
+using AutoMapper;
 using CourseTrackerBE.DataAccess;
+using CourseTrackerBE.Dtos.Users;
 using CourseTrackerBE.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,24 +11,27 @@ namespace CourseTrackerBE.Controllers
     public class UsersController : ControllerBase
     {
         private readonly ILiteDbContext _db;
+        private readonly IMapper _mapper;
 
-        public UsersController(ILiteDbContext db)
+        public UsersController(ILiteDbContext db, IMapper mapper)
         {
             _db = db;
+            _mapper = mapper;
         }
 
         [HttpGet(Name = "GetUsers")]
-        public ActionResult<IEnumerable<User>> GetUsers()
+        public ActionResult<IEnumerable<UserDto>> GetUsers()
         {
-            return Ok(_db.Users.Query().ToEnumerable());
+            var users = _db.Users.Query().ToEnumerable();
+            return Ok(_mapper.Map<IEnumerable<UserDto>>(users));
         }
         
         [HttpPost(Name = "AddUser")]
-        public ActionResult<User> AddUser([FromBody] User user)
+        public ActionResult<UserDto> AddUser([FromBody] UserDto user)
         {
-            var id = _db.Users.Insert(user);
+            var id = _db.Users.Insert(_mapper.Map<User>(user));
             var res = _db.Users.FindById(id);
-            return Ok(res);
+            return Ok(_mapper.Map<UserDto>(res));
         }
     }
 }
