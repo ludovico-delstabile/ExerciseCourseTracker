@@ -3,7 +3,7 @@ using LiteDB;
 
 namespace CourseTrackerBE.DataAccess;
 
-public interface ILiteDbContext
+public interface IAppDbContext
 {
     ILiteCollection<User> Users { get; }
     ILiteCollection<Course> Courses { get; }

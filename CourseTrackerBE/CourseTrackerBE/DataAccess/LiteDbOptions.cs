@@ -1,4 +1,4 @@
-﻿namespace CourseTrackerBE.Options;
+﻿namespace CourseTrackerBE.DataAccess;
 
 public class LiteDbOptions
 {

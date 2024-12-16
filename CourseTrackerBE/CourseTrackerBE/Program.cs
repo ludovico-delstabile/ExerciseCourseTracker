@@ -1,7 +1,6 @@
 using CourseTrackerBE.Authentication;
 using CourseTrackerBE.Automapper;
 using CourseTrackerBE.DataAccess;
-using CourseTrackerBE.Options;
 using CourseTrackerBE.Services;
 using System.Text.Json.Serialization;
 
@@ -15,13 +14,18 @@ builder.Services.AddControllers().AddJsonOptions(opt =>
 builder.Services.Configure<AuthOptions>(builder.Configuration.GetSection(AuthOptions.Auth));
 builder.Services.Configure<LiteDbOptions>(builder.Configuration.GetSection(LiteDbOptions.LiteDb));
 
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddSingleton<IAppDbContext, AppDbContext>();
+
 builder.Services
     .AddEndpointsApiExplorer()
-    .AddSwaggerGen()
-    .AddCustomAuthentication(builder.Configuration)
-    .AddCustomAutomapper();
+    .AddSwaggerGen();
 
-builder.Services.AddSingleton<ILiteDbContext, LiteDbContext>();
+builder.Services.AddCustomAuthentication(builder.Configuration);
+
+builder.Services.AddCustomAutomapper();
+
 builder.Services.AddTransient<SubscriptionsService>();
 
 var app = builder.Build();
@@ -33,10 +37,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
-app.UseCors(builder => builder.AllowAnyOrigin());
+app.UseCors(builder => builder.AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin());
 
 app.Run();

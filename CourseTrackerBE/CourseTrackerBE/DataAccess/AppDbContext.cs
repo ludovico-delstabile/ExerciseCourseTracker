@@ -1,17 +1,16 @@
 ﻿using CourseTrackerBE.Enums;
 using CourseTrackerBE.Models;
-using CourseTrackerBE.Options;
+using CourseTrackerBE.Utils;
 using LiteDB;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 
 namespace CourseTrackerBE.DataAccess;
 
-public class LiteDbContext : ILiteDbContext
+public class AppDbContext : IAppDbContext
 {
     public LiteDatabase _db { get; }
 
-    public LiteDbContext(IOptions<LiteDbOptions> options)
+    public AppDbContext(IOptions<LiteDbOptions> options)
     {
         Configure();
         _db = new LiteDatabase(options.Value.DatabaseLocation);
@@ -41,9 +40,7 @@ public class LiteDbContext : ILiteDbContext
 
         if (adminCount < 1)
         {
-            var admin = new User { Username = "Admin", UserType = EUserType.Admin };
-            var hasher = new PasswordHasher<User>();
-            admin.HashedPassword = hasher.HashPassword(admin, "Admin1!");
+            var admin = new User { Username = "Admin", UserType = EUserType.Admin, HashedPassword = PasswordUtils.HashPassword("Admin1!") };
             Users.Insert(admin);
         }
 
@@ -53,9 +50,7 @@ public class LiteDbContext : ILiteDbContext
 
         if (usersCount < 1)
         {
-            var user = new User { Username = "User", UserType = EUserType.User };
-            var hasher = new PasswordHasher<User>();
-            user.HashedPassword = hasher.HashPassword(user, "User1!");
+            var user = new User { Username = "User", UserType = EUserType.User, HashedPassword = PasswordUtils.HashPassword("User1!") };
             Users.Insert(user);
         }
     }

@@ -1,4 +1,4 @@
-﻿namespace CourseTrackerBE.Options;
+﻿namespace CourseTrackerBE.Authentication;
 
 public class AuthOptions
 {

@@ -1,49 +1,59 @@
 ﻿using AutoMapper;
+using CourseTrackerBE.Authentication;
 using CourseTrackerBE.DataAccess;
 using CourseTrackerBE.Dtos.Subscriptions;
-using CourseTrackerBE.Models;
 using CourseTrackerBE.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CourseTrackerBE.Controllers
+namespace CourseTrackerBE.Controllers;
+
+[Authorize]
+[Route("api/[controller]")]
+[ApiController]
+public class SubscriptionsController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class SubscriptionsController : ControllerBase
+    private readonly IAppDbContext _db;
+    private readonly IMapper _mapper;
+    private readonly CurrentUserService _currentUserService;
+    private readonly SubscriptionsService _subscriptionsService;
+
+    public SubscriptionsController(IAppDbContext db, IMapper mapper, SubscriptionsService subscriptionsService, CurrentUserService currentUserService)
     {
-        private readonly ILiteDbContext _db;
-        private readonly IMapper _mapper;
-        private readonly SubscriptionsService _subscriptionsService;
+        _db = db;
+        _mapper = mapper;
+        _subscriptionsService = subscriptionsService;
+        _currentUserService = currentUserService;
+    }
 
-        public SubscriptionsController(ILiteDbContext db, IMapper mapper, SubscriptionsService subscriptionsService)
-        {
-            _db = db;
-            _mapper = mapper;
-            _subscriptionsService = subscriptionsService;
-        }
+    [HttpGet(Name = "GetSubscriptions")]
+    public ActionResult<IEnumerable<SubscriptionDto>> GetSubscriptions()
+    {
+        var userId = _currentUserService.UserId!.Value;
+        var subscriptions = _db.Subscriptions.Query().Where(s => s.UserId == userId).ToEnumerable();
+        return Ok(_mapper.Map<IEnumerable<SubscriptionDto>>(subscriptions));
+    }
 
-        [HttpGet(Name = "GetSubscriptions")]
-        public ActionResult<IEnumerable<SubscriptionDto>> GetSubscriptions()
-        {
-            // TODO Get current User and filter by userId
-            var subscriptions = _db.Subscriptions.Query().ToEnumerable();
-            return Ok(_mapper.Map<IEnumerable<SubscriptionDto>>(subscriptions));
-        }
+    [HttpPost("Subscribe", Name = "SubscribeCourse")]
+    public ActionResult<SubscriptionDto> SubscribeCourse([FromBody] int courseId)
+    {
+        var subscription = _subscriptionsService.Subscribe(_currentUserService.UserId!.Value, courseId);
+        return Ok(_mapper.Map<SubscriptionDto>(subscription));
+    }
 
-        [HttpPost("Subscribe", Name = "SubscribeCourse")]
-        public ActionResult SubscribeCourse([FromBody] int courseId)
-        {
-            //var id = _db.Courses.Insert(course);
-            //var res = _db.Courses.FindById(id);
-            return Ok();
-        }
+    [HttpPost("{subscriptionId}/Unsubscribe", Name = "UnsubscribeCourse")]
+    public ActionResult UnsubscribeCourse([FromQuery] int subscriptionId)
+    {
+        _subscriptionsService.Unsubscribe(subscriptionId);
+        return Ok();
+    }
 
-        [HttpPost("Unsubscribe", Name = "UnsubscribeCourse")]
-        public ActionResult UnsubscribeCourse([FromBody] int courseId)
-        {
-            //var id = _db.Courses.Insert(course);
-            //var res = _db.Courses.FindById(id);
-            return Ok();
-        }
+    [HttpPatch("{subscriptionId}/UpdateTrackedTime", Name = "UpdateTrackedTime")]
+    public ActionResult<SubscriptionDto> UpdateTrackedTime([FromQuery] int subscriptionId, [FromBody] float trackedhours)
+    {
+        var subscription = _db.Subscriptions.FindById(subscriptionId);
+        subscription.TrackedHours = trackedhours;
+        _db.Subscriptions.Update(subscription);
+        return Ok(_mapper.Map<SubscriptionDto>(subscription));
     }
 }
