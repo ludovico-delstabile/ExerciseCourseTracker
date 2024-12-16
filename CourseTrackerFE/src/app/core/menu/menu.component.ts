@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, output, signal } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
-import { RouterModule, ActivatedRoute, Router, EventType } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { menuRoutes } from '../../app.routes';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { filter } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { CurrentLeafRouteService } from '../services/current-leaf-route.service';
 
 @Component({
   selector: 'app-menu',
@@ -19,7 +19,7 @@ import { filter } from 'rxjs';
   template: `
     <mat-nav-list>
       @for(item of menuItems; track item) {
-        <a mat-list-item [routerLink]="item.path" [activated]="currentRouteKey() === item.data?.['key']" (click)="navigate.emit()">{{ item.menuLabel }}</a>
+        <a mat-list-item [routerLink]="item.path" [activated]="currentRouteKey() === item.data?.['key']" (click)="navigate.emit()">{{ item.title }}</a>
       }
     </mat-nav-list>
   `,
@@ -29,15 +29,6 @@ export class MenuComponent {
   
   menuItems = menuRoutes;
 
-  route = inject(ActivatedRoute);
-  router = inject(Router);
-  currentRouteKey = signal<string | undefined>(undefined);
-
-  constructor() {
-    this.router.events.pipe(filter(evt => evt.type === EventType.NavigationEnd)).subscribe(evt => {
-      let leaf = this.route;
-      while (leaf.firstChild) leaf = leaf.firstChild;
-      this.currentRouteKey.set(leaf.snapshot.data['key']);
-    })
-  }
+  leafRoute = inject(CurrentLeafRouteService);
+  currentRouteKey = computed(() => this.leafRoute.route()?.data?.['key']);
 }

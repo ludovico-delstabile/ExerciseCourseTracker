@@ -8,26 +8,26 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { LoginDto } from '../../models/login-dto';
+import { SubscriptionDto } from '../../models/subscription-dto';
 
-export interface ApiAuthLoginPost$Plain$Params {
-      body?: LoginDto
+export interface SubscribeCourse$Json$Params {
+      body?: number
 }
 
-export function apiAuthLoginPost$Plain(http: HttpClient, rootUrl: string, params?: ApiAuthLoginPost$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<string>> {
-  const rb = new RequestBuilder(rootUrl, apiAuthLoginPost$Plain.PATH, 'post');
+export function subscribeCourse$Json(http: HttpClient, rootUrl: string, params?: SubscribeCourse$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<SubscriptionDto>> {
+  const rb = new RequestBuilder(rootUrl, subscribeCourse$Json.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/*+json');
   }
 
   return http.request(
-    rb.build({ responseType: 'text', accept: 'text/plain', context })
+    rb.build({ responseType: 'json', accept: 'text/json', context })
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<string>;
+      return r as StrictHttpResponse<SubscriptionDto>;
     })
   );
 }
 
-apiAuthLoginPost$Plain.PATH = '/api/Auth/login';
+subscribeCourse$Json.PATH = '/api/Subscriptions/Subscribe';

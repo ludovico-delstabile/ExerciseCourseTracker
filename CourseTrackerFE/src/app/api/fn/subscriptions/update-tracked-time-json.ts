@@ -8,27 +8,30 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
+import { SubscriptionDto } from '../../models/subscription-dto';
 
-export interface UnsubscribeCourse$Params {
+export interface UpdateTrackedTime$Json$Params {
   subscriptionId?: number;
   subscriptionId: string;
+      body?: number
 }
 
-export function unsubscribeCourse(http: HttpClient, rootUrl: string, params: UnsubscribeCourse$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, unsubscribeCourse.PATH, 'post');
+export function updateTrackedTime$Json(http: HttpClient, rootUrl: string, params: UpdateTrackedTime$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<SubscriptionDto>> {
+  const rb = new RequestBuilder(rootUrl, updateTrackedTime$Json.PATH, 'patch');
   if (params) {
     rb.query('subscriptionId', params.subscriptionId, {});
     rb.path('subscriptionId', params.subscriptionId, {});
+    rb.body(params.body, 'application/*+json');
   }
 
   return http.request(
-    rb.build({ responseType: 'text', accept: '*/*', context })
+    rb.build({ responseType: 'json', accept: 'text/json', context })
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;
+      return r as StrictHttpResponse<SubscriptionDto>;
     })
   );
 }
 
-unsubscribeCourse.PATH = '/api/Subscriptions/{subscriptionId}/Unsubscribe';
+updateTrackedTime$Json.PATH = '/api/Subscriptions/{subscriptionId}/UpdateTrackedTime';

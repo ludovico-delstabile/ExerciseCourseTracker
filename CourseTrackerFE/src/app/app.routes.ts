@@ -1,25 +1,25 @@
 import { Routes } from '@angular/router';
 import { LayoutComponent } from './core/layout/layout.component';
-import { MenuRoute } from './core/menu-route';
+import { authGuard } from './core/guards/auth.guard';
 
-export const menuRoutes: MenuRoute[] = [
+export const menuRoutes: Routes = [
   {
     path: '',
     loadComponent: () => import('./features/subscriptions/subscriptions.component').then(c => c.SubscriptionsComponent),
     data: { key: 'subscriptions' },
-    menuLabel: 'Subscriptions',
+    title: 'Subscriptions',
   },
   {
     path: 'courses',
     loadComponent: () => import('./features/courses/courses.component').then(c => c.CoursesComponent),
     data: { key: 'courses' },
-    menuLabel: 'Courses',
+    title: 'Courses',
   },
   {
     path: 'users',
     loadComponent: () => import('./features/users/users.component').then(c => c.UsersComponent),
     data: { key: 'users' },
-    menuLabel: 'Users',
+    title: 'Users',
   }
 ];
 
@@ -28,6 +28,7 @@ export const routes: Routes = [
     path: '',
     component: LayoutComponent,
     children: menuRoutes,
+    canActivate: [authGuard],
   },
   {
     path: 'login',

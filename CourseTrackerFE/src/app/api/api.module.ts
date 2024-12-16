@@ -6,8 +6,8 @@ import { NgModule, ModuleWithProviders, SkipSelf, Optional } from '@angular/core
 import { HttpClient } from '@angular/common/http';
 import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
 
-import { AuthService } from './services/auth.service';
 import { CoursesService } from './services/courses.service';
+import { LoginService } from './services/login.service';
 import { SubscriptionsService } from './services/subscriptions.service';
 import { UsersService } from './services/users.service';
 
@@ -19,8 +19,8 @@ import { UsersService } from './services/users.service';
   exports: [],
   declarations: [],
   providers: [
-    AuthService,
     CoursesService,
+    LoginService,
     SubscriptionsService,
     UsersService,
     ApiConfiguration

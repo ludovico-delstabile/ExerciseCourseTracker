@@ -10,18 +10,18 @@ import { RequestBuilder } from '../../request-builder';
 
 import { LoginDto } from '../../models/login-dto';
 
-export interface ApiAuthLoginPost$Json$Params {
+export interface ApiLoginPost$Plain$Params {
       body?: LoginDto
 }
 
-export function apiAuthLoginPost$Json(http: HttpClient, rootUrl: string, params?: ApiAuthLoginPost$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<string>> {
-  const rb = new RequestBuilder(rootUrl, apiAuthLoginPost$Json.PATH, 'post');
+export function apiLoginPost$Plain(http: HttpClient, rootUrl: string, params?: ApiLoginPost$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<string>> {
+  const rb = new RequestBuilder(rootUrl, apiLoginPost$Plain.PATH, 'post');
   if (params) {
     rb.body(params.body, 'application/*+json');
   }
 
   return http.request(
-    rb.build({ responseType: 'json', accept: 'text/json', context })
+    rb.build({ responseType: 'text', accept: 'text/plain', context })
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
@@ -30,4 +30,4 @@ export function apiAuthLoginPost$Json(http: HttpClient, rootUrl: string, params?
   );
 }
 
-apiAuthLoginPost$Json.PATH = '/api/Auth/login';
+apiLoginPost$Plain.PATH = '/api/Login';

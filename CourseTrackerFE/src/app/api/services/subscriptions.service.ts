@@ -15,11 +15,17 @@ import { getSubscriptions$Json } from '../fn/subscriptions/get-subscriptions-jso
 import { GetSubscriptions$Json$Params } from '../fn/subscriptions/get-subscriptions-json';
 import { getSubscriptions$Plain } from '../fn/subscriptions/get-subscriptions-plain';
 import { GetSubscriptions$Plain$Params } from '../fn/subscriptions/get-subscriptions-plain';
-import { subscribeCourse } from '../fn/subscriptions/subscribe-course';
-import { SubscribeCourse$Params } from '../fn/subscriptions/subscribe-course';
+import { subscribeCourse$Json } from '../fn/subscriptions/subscribe-course-json';
+import { SubscribeCourse$Json$Params } from '../fn/subscriptions/subscribe-course-json';
+import { subscribeCourse$Plain } from '../fn/subscriptions/subscribe-course-plain';
+import { SubscribeCourse$Plain$Params } from '../fn/subscriptions/subscribe-course-plain';
 import { SubscriptionDto } from '../models/subscription-dto';
 import { unsubscribeCourse } from '../fn/subscriptions/unsubscribe-course';
 import { UnsubscribeCourse$Params } from '../fn/subscriptions/unsubscribe-course';
+import { updateTrackedTime$Json } from '../fn/subscriptions/update-tracked-time-json';
+import { UpdateTrackedTime$Json$Params } from '../fn/subscriptions/update-tracked-time-json';
+import { updateTrackedTime$Plain } from '../fn/subscriptions/update-tracked-time-plain';
+import { UpdateTrackedTime$Plain$Params } from '../fn/subscriptions/update-tracked-time-plain';
 
 @Injectable({ providedIn: 'root' })
 export class SubscriptionsService extends BaseService {
@@ -79,36 +85,58 @@ export class SubscriptionsService extends BaseService {
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `subscribeCourse()` instead.
+   * To access only the response body, use `subscribeCourse$Plain()` instead.
    *
    * This method sends `application/*+json` and handles request body of type `application/*+json`.
    */
-  subscribeCourse$Response(params?: SubscribeCourse$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-    return subscribeCourse(this.http, this.rootUrl, params, context);
+  subscribeCourse$Plain$Response(params?: SubscribeCourse$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<SubscriptionDto>> {
+    return subscribeCourse$Plain(this.http, this.rootUrl, params, context);
   }
 
   /**
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `subscribeCourse$Response()` instead.
+   * To access the full response (for headers, for example), `subscribeCourse$Plain$Response()` instead.
    *
    * This method sends `application/*+json` and handles request body of type `application/*+json`.
    */
-  subscribeCourse(params?: SubscribeCourse$Params, context?: HttpContext): Observable<void> {
-    return this.subscribeCourse$Response(params, context).pipe(
-      map((r: StrictHttpResponse<void>): void => r.body)
+  subscribeCourse$Plain(params?: SubscribeCourse$Plain$Params, context?: HttpContext): Observable<SubscriptionDto> {
+    return this.subscribeCourse$Plain$Response(params, context).pipe(
+      map((r: StrictHttpResponse<SubscriptionDto>): SubscriptionDto => r.body)
+    );
+  }
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `subscribeCourse$Json()` instead.
+   *
+   * This method sends `application/*+json` and handles request body of type `application/*+json`.
+   */
+  subscribeCourse$Json$Response(params?: SubscribeCourse$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<SubscriptionDto>> {
+    return subscribeCourse$Json(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `subscribeCourse$Json$Response()` instead.
+   *
+   * This method sends `application/*+json` and handles request body of type `application/*+json`.
+   */
+  subscribeCourse$Json(params?: SubscribeCourse$Json$Params, context?: HttpContext): Observable<SubscriptionDto> {
+    return this.subscribeCourse$Json$Response(params, context).pipe(
+      map((r: StrictHttpResponse<SubscriptionDto>): SubscriptionDto => r.body)
     );
   }
 
   /** Path part for operation `unsubscribeCourse()` */
-  static readonly UnsubscribeCoursePath = '/api/Subscriptions/Unsubscribe';
+  static readonly UnsubscribeCoursePath = '/api/Subscriptions/{subscriptionId}/Unsubscribe';
 
   /**
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `unsubscribeCourse()` instead.
    *
-   * This method sends `application/*+json` and handles request body of type `application/*+json`.
+   * This method doesn't expect any request body.
    */
-  unsubscribeCourse$Response(params?: UnsubscribeCourse$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  unsubscribeCourse$Response(params: UnsubscribeCourse$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
     return unsubscribeCourse(this.http, this.rootUrl, params, context);
   }
 
@@ -116,11 +144,58 @@ export class SubscriptionsService extends BaseService {
    * This method provides access only to the response body.
    * To access the full response (for headers, for example), `unsubscribeCourse$Response()` instead.
    *
-   * This method sends `application/*+json` and handles request body of type `application/*+json`.
+   * This method doesn't expect any request body.
    */
-  unsubscribeCourse(params?: UnsubscribeCourse$Params, context?: HttpContext): Observable<void> {
+  unsubscribeCourse(params: UnsubscribeCourse$Params, context?: HttpContext): Observable<void> {
     return this.unsubscribeCourse$Response(params, context).pipe(
       map((r: StrictHttpResponse<void>): void => r.body)
+    );
+  }
+
+  /** Path part for operation `updateTrackedTime()` */
+  static readonly UpdateTrackedTimePath = '/api/Subscriptions/{subscriptionId}/UpdateTrackedTime';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `updateTrackedTime$Plain()` instead.
+   *
+   * This method sends `application/*+json` and handles request body of type `application/*+json`.
+   */
+  updateTrackedTime$Plain$Response(params: UpdateTrackedTime$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<SubscriptionDto>> {
+    return updateTrackedTime$Plain(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `updateTrackedTime$Plain$Response()` instead.
+   *
+   * This method sends `application/*+json` and handles request body of type `application/*+json`.
+   */
+  updateTrackedTime$Plain(params: UpdateTrackedTime$Plain$Params, context?: HttpContext): Observable<SubscriptionDto> {
+    return this.updateTrackedTime$Plain$Response(params, context).pipe(
+      map((r: StrictHttpResponse<SubscriptionDto>): SubscriptionDto => r.body)
+    );
+  }
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `updateTrackedTime$Json()` instead.
+   *
+   * This method sends `application/*+json` and handles request body of type `application/*+json`.
+   */
+  updateTrackedTime$Json$Response(params: UpdateTrackedTime$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<SubscriptionDto>> {
+    return updateTrackedTime$Json(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `updateTrackedTime$Json$Response()` instead.
+   *
+   * This method sends `application/*+json` and handles request body of type `application/*+json`.
+   */
+  updateTrackedTime$Json(params: UpdateTrackedTime$Json$Params, context?: HttpContext): Observable<SubscriptionDto> {
+    return this.updateTrackedTime$Json$Response(params, context).pipe(
+      map((r: StrictHttpResponse<SubscriptionDto>): SubscriptionDto => r.body)
     );
   }
 

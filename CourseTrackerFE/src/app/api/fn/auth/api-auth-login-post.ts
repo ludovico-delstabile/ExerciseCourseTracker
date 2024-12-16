@@ -8,17 +8,16 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
+import { LoginDto } from '../../models/login-dto';
 
-export interface UnsubscribeCourse$Params {
-  subscriptionId?: number;
-  subscriptionId: string;
+export interface ApiAuthLoginPost$Params {
+      body?: LoginDto
 }
 
-export function unsubscribeCourse(http: HttpClient, rootUrl: string, params: UnsubscribeCourse$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
-  const rb = new RequestBuilder(rootUrl, unsubscribeCourse.PATH, 'post');
+export function apiAuthLoginPost(http: HttpClient, rootUrl: string, params?: ApiAuthLoginPost$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  const rb = new RequestBuilder(rootUrl, apiAuthLoginPost.PATH, 'post');
   if (params) {
-    rb.query('subscriptionId', params.subscriptionId, {});
-    rb.path('subscriptionId', params.subscriptionId, {});
+    rb.body(params.body, 'application/*+json');
   }
 
   return http.request(
@@ -31,4 +30,4 @@ export function unsubscribeCourse(http: HttpClient, rootUrl: string, params: Uns
   );
 }
 
-unsubscribeCourse.PATH = '/api/Subscriptions/{subscriptionId}/Unsubscribe';
+apiAuthLoginPost.PATH = '/api/Auth/login';
