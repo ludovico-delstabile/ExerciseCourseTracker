@@ -9,6 +9,7 @@ import { SidePanelLayoutComponent } from "../../shared/side-panel-layout.compone
 import { FormCourseComponent } from "./components/form-course.component";
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-courses',
@@ -44,7 +45,8 @@ import { MatButtonModule } from '@angular/material/button';
 })
 export class CoursesComponent {
   private _apiSrv = inject(CoursesService);
-
+  private _snackbar = inject(MatSnackBar);
+  
   loadCourses$ = new Subject<void>();
   courses$ = this.loadCourses$.pipe(startWith(void 0), switchMap(() => this._apiSrv.getCourses$Json()), shareReplay(1));
   courses = toSignal(this.courses$);
@@ -78,6 +80,7 @@ export class CoursesComponent {
     req$.subscribe((res) => {
       this.loadCourses$.next();
       this.selectionState.set({ courseId: res.id });
+      this._snackbar.open(`${ res?.name } Saved!`, 'Ok', { duration: 2000 });
     });
   }
 }

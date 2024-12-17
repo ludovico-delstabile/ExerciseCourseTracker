@@ -38,7 +38,7 @@ import { FormSubscriptionComponent } from "./components/form-subscription.compon
       <div panel *ngIf="selectedSubscription() as subscription">
         <app-form-subscription
           [patch]="subscription.trackedHours"
-          (submitted)="onSaveTrackedTime($event)"
+          (submitted)="onSaveTrackedTime($event, subscription)"
           (canceled)="onCancel()"
           (unsubscribe)="onUnsubscribe(subscription)"
         />
@@ -74,9 +74,10 @@ export class SubscriptionsComponent {
     this.selectedSubscriptionId.set(undefined);
   }
 
-  onSaveTrackedTime(value: number) {
+  onSaveTrackedTime(value: number, subscription: SubscriptionDto) {
     this._apiSrv.updateTrackedTime$Json({ subscriptionId: this.selectedSubscriptionId()!, body: value }).subscribe(() => {
       this.loadSubscriptions$.next();
+      this._snackbar.open(`${ subscription.course?.name } Updated!`, 'Ok', { duration: 2000 });
     })
   }
 }
