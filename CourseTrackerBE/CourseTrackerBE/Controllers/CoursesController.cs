@@ -35,4 +35,12 @@ public class CoursesController : ControllerBase
         var res = _db.Courses.FindById(id);
         return Ok(_mapper.Map<CourseDto>(res));
     }
+
+    [HttpPatch(Name = "EditCourse")]
+    public ActionResult<CourseDto> EditCourse([FromBody] CourseDto course)
+    {
+        _db.Courses.Update(_mapper.Map<Course>(course));
+        var res = _db.Courses.FindById(course.Id);
+        return Ok(_mapper.Map<CourseDto>(res));
+    }
 }

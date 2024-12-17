@@ -30,7 +30,11 @@ public class SubscriptionsController : ControllerBase
     public ActionResult<IEnumerable<SubscriptionDto>> GetSubscriptions()
     {
         var userId = _currentUserService.UserId!.Value;
-        var subscriptions = _db.Subscriptions.Query().Where(s => s.UserId == userId).ToEnumerable();
+        var subscriptions = _db.Subscriptions
+            .Query()
+            .Include(s => s.Course)
+            .Where(s => s.UserId == userId)
+            .ToEnumerable();
         return Ok(_mapper.Map<IEnumerable<SubscriptionDto>>(subscriptions));
     }
 
@@ -42,14 +46,14 @@ public class SubscriptionsController : ControllerBase
     }
 
     [HttpPost("{subscriptionId}/Unsubscribe", Name = "UnsubscribeCourse")]
-    public ActionResult UnsubscribeCourse([FromQuery] int subscriptionId)
+    public ActionResult UnsubscribeCourse(int subscriptionId)
     {
         _subscriptionsService.Unsubscribe(subscriptionId);
         return Ok();
     }
 
     [HttpPatch("{subscriptionId}/UpdateTrackedTime", Name = "UpdateTrackedTime")]
-    public ActionResult<SubscriptionDto> UpdateTrackedTime([FromQuery] int subscriptionId, [FromBody] float trackedhours)
+    public ActionResult<SubscriptionDto> UpdateTrackedTime(int subscriptionId, [FromBody] float trackedhours)
     {
         var subscription = _db.Subscriptions.FindById(subscriptionId);
         subscription.TrackedHours = trackedhours;

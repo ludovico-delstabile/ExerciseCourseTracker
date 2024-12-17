@@ -1,4 +1,6 @@
-﻿namespace CourseTrackerBE.Dtos.Courses;
+﻿using CourseTrackerBE.Dtos.Users;
+
+namespace CourseTrackerBE.Dtos.Courses;
 
 public class CourseDto
 {
@@ -6,4 +8,5 @@ public class CourseDto
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public DateTime StartDate { get; set; }
+    public UserDto? Instructor { get; set; }
 }
