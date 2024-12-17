@@ -27,7 +27,7 @@ import { FormSubscriptionComponent } from "./components/form-subscription.compon
 ],
   template: `
     <app-side-panel-layout [isPanelOpen]="!!selectedSubscriptionId()">
-      <mat-list content class="page-list">
+      <mat-list content >
         @for (subscription of subscriptions$ | async; track subscription) {
           <mat-list-item (click)="onSelectSubscription(subscription)" [class.selected]="selectedSubscriptionId() === subscription.id">
             <span matListItemTitle>{{ subscription.course?.name }}</span>
