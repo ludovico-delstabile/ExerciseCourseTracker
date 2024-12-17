@@ -7,13 +7,14 @@ import { shareReplay, startWith, Subject, switchMap } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { SidePanelLayoutComponent } from "../../shared/side-panel-layout.component";
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { CourseDetailsComponent } from "./components/course-details.component";
+import { CourseDetailsComponent } from "../../shared/courses/course-details.component";
 import { CourseDto } from '../../api/models';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-available-courses',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     MatListModule,
@@ -21,11 +22,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     SidePanelLayoutComponent,
     MatToolbarModule,
     CourseDetailsComponent
-],
+  ],
   template: `
     <app-side-panel-layout [isPanelOpen]="!!selectedCourseId()">
       <div content>
-        <mat-list content>
+        <mat-list content class="page-list">
           @for (course of courses$ | async; track course) {
             <mat-list-item (click)="onSelectCourse(course)" [class.selected]="selectedCourseId() === course.id">
               <span matListItemTitle>{{ course.name }}</span>
@@ -34,10 +35,15 @@ import { MatSnackBar } from '@angular/material/snack-bar';
           }
         </mat-list>
       </div>
-      <app-course-details panel *ngIf="selectedCourse() as course" [course]="course" (subscribed)="onSubscribe(course)" (canceled)="onCancel()"/>
+      <app-course-details panel *ngIf="selectedCourse() as course" [course]="course">
+        <mat-toolbar>
+          <span class="spacer"></span>
+          <button type="button" mat-stroked-button (click)="onCancel()">Cancel</button>
+          <button type="button" mat-stroked-button (click)="onSubscribe(course)">Subscribe</button>
+        </mat-toolbar>
+      </app-course-details>
     </app-side-panel-layout>
   `,
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AvailableCoursesComponent {
   private _apiSrv = inject(CoursesService);
@@ -58,7 +64,7 @@ export class AvailableCoursesComponent {
   onSubscribe(course: CourseDto) {
     this._apiSubscriptionsSrv.subscribeCourse$Json({ body: course.id }).subscribe(() => {
       this._snackbar.open(`Subscribed to: ${ course.name }`, 'Ok', { duration: 2000 });
-    })
+    });
   }
 
   onCancel() {

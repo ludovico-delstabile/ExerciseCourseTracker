@@ -32,7 +32,7 @@ public class SubscriptionsController : ControllerBase
         var userId = _currentUserService.UserId!.Value;
         var subscriptions = _db.Subscriptions
             .Query()
-            .Include(s => s.Course)
+            .Include(s => s.Course).Include(s => s.Course.Instructor)
             .Where(s => s.UserId == userId)
             .ToEnumerable();
         return Ok(_mapper.Map<IEnumerable<SubscriptionDto>>(subscriptions));

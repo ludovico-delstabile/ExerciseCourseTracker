@@ -24,7 +24,7 @@ public class CoursesController : ControllerBase
     [HttpGet(Name = "GetCourses")]
     public ActionResult<IEnumerable<CourseDto>> GetCourses()
     {
-        var courses = _db.Courses.Query().ToEnumerable();
+        var courses = _db.Courses.Query().Include(c => c.Instructor).ToEnumerable();
         return Ok(_mapper.Map<IEnumerable<CourseDto>>(courses));
     }
 

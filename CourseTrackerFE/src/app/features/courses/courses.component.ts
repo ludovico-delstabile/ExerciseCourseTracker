@@ -29,7 +29,7 @@ import { MatButtonModule } from '@angular/material/button';
           <span class="spacer"></span>
           <button mat-stroked-button (click)="onAddCourse()">Add Course</button>
         </mat-toolbar>
-        <mat-list content>
+        <mat-list content class="page-list">
           @for (course of courses$ | async; track course) {
             <mat-list-item (click)="onSelectCourse(course)" [class.selected]="selectedCourseId() === course.id">
               <span matListItemTitle>{{ course.name }}</span>
