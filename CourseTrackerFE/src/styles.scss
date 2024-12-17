@@ -1,0 +1,20 @@
+/* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+mat-toolbar {
+  .spacer {
+    flex: 1;
+  }
+}
+
+mat-list-item {
+  border-bottom: 1px solid white;
+  &:hover {
+    background-color: #ddd2;
+  }
+  &.selected {
+    background-color: var(--mat-list-active-indicator-color);
+  }
+}
