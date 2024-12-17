@@ -35,13 +35,14 @@ import { MatSnackBar } from '@angular/material/snack-bar';
           }
         </mat-list>
       </div>
-      <app-course-details panel *ngIf="selectedCourse() as course" [course]="course">
+      <div panel *ngIf="selectedCourse() as course">
+        <app-course-details  [course]="course"/>
         <mat-toolbar>
           <span class="spacer"></span>
           <button type="button" mat-stroked-button (click)="onCancel()">Cancel</button>
           <button type="button" mat-stroked-button (click)="onSubscribe(course)">Subscribe</button>
         </mat-toolbar>
-      </app-course-details>
+      </div>
     </app-side-panel-layout>
   `,
 })

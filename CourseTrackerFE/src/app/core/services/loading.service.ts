@@ -7,10 +7,6 @@ export class LoadingService {
   private loadingCount = signal(0);
   public isLoading = computed(() => this.loadingCount() > 0);
 
-  constructor() {
-    effect(() => console.log(this.loadingCount()))
-  }
-
   increaseLoadingCount() {
     this.loadingCount.update(count => count + 1);
   }

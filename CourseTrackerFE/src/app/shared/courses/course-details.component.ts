@@ -4,12 +4,14 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { CourseDto } from '../../api/models';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-course-details',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    DatePipe,
     MatButtonModule,
     MatFormFieldModule,
     MatInput,
@@ -24,6 +26,9 @@ import { CourseDto } from '../../api/models';
     }
   `,
   template: `
+    <mat-toolbar>
+      <h5>Course Details</h5>
+    </mat-toolbar>
     <mat-form-field>
       <mat-label>Name</mat-label>
       <input matInput readonly [value]="course().name"/>
@@ -33,10 +38,13 @@ import { CourseDto } from '../../api/models';
       <textarea matInput rows="5" readonly [value]="course().description"></textarea>
     </mat-form-field>
     <mat-form-field>
+      <mat-label>Start Date</mat-label>
+      <input matInput rows="5" readonly [value]="course().startDate | date"/>
+    </mat-form-field>
+    <mat-form-field>
       <mat-label>Instructor</mat-label>
       <input matInput readonly [value]="course().instructor?.username"/>
     </mat-form-field>
-    <ng-content></ng-content>
   `,
 })
 export class CourseDetailsComponent {

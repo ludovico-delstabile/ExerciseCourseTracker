@@ -10,6 +10,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { SubscriptionDto } from '../../api/models';
 import { MatButtonModule } from '@angular/material/button';
+import { FormSubscriptionComponent } from "./components/form-subscription.component";
 
 @Component({
   selector: 'app-subscriptions',
@@ -22,6 +23,7 @@ import { MatButtonModule } from '@angular/material/button';
     MatToolbar,
     SidePanelLayoutComponent,
     MatButtonModule,
+    FormSubscriptionComponent
 ],
   template: `
     <app-side-panel-layout [isPanelOpen]="!!selectedSubscriptionId()">
@@ -33,13 +35,15 @@ import { MatButtonModule } from '@angular/material/button';
           </mat-list-item>
         }
       </mat-list>
-      <app-course-details panel *ngIf="selectedSubscription() as subscription" [course]="subscription.course!">
-        <mat-toolbar>
-          <span class="spacer"></span>
-          <button type="button" mat-stroked-button (click)="onCancel()">Cancel</button>
-          <button type="button" mat-stroked-button (click)="onUnsubscribe(subscription)">Unsubscribe</button>
-        </mat-toolbar>
-      </app-course-details>
+      <div panel *ngIf="selectedSubscription() as subscription">
+        <app-form-subscription
+          [patch]="subscription.trackedHours"
+          (submitted)="onSaveTrackedTime($event)"
+          (canceled)="onCancel()"
+          (unsubscribe)="onUnsubscribe(subscription)"
+        />
+        <app-course-details [course]="subscription.course!" />
+      </div>
     </app-side-panel-layout>
   `,
 })
@@ -68,5 +72,11 @@ export class SubscriptionsComponent {
 
   onCancel() {
     this.selectedSubscriptionId.set(undefined);
+  }
+
+  onSaveTrackedTime(value: number) {
+    this._apiSrv.updateTrackedTime$Json({ subscriptionId: this.selectedSubscriptionId()!, body: value }).subscribe(() => {
+      this.loadSubscriptions$.next();
+    })
   }
 }

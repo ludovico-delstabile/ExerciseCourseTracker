@@ -7,7 +7,7 @@ export const menuRoutes: Routes = [
     path: '',
     loadComponent: () => import('./features/subscriptions/subscriptions.component').then(c => c.SubscriptionsComponent),
     data: { key: 'subscriptions' },
-    title: 'Subscriptions',
+    title: 'My Courses',
   },
   {
     path: 'available-courses',

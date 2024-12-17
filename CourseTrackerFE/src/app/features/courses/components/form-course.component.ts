@@ -7,6 +7,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { CourseDto, UserDto } from '../../../api/models';
 import { CommonModule } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 
 @Component({
@@ -21,6 +23,7 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
     MatInput,
     MatSelectModule,
     MatToolbarModule,
+    MatDatepickerModule,
   ],
   styles: `
     :host {
@@ -31,11 +34,11 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
     }
   `,
   template: `
+    <mat-toolbar>
+      <h5 *ngIf="!patch()">Add Course</h5>
+      <h5 *ngIf="patch()">Edit Course</h5>
+    </mat-toolbar>
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
-      <mat-toolbar>
-        <h5 *ngIf="!patch()">Add Course</h5>
-        <h5 *ngIf="patch()">Edit Course</h5>
-      </mat-toolbar>
       <mat-form-field>
         <mat-label>Name</mat-label>
         <input matInput formControlName="name"/>
@@ -43,6 +46,12 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
       <mat-form-field>
         <mat-label>Description</mat-label>
         <textarea matInput rows="5" formControlName="description"></textarea>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>StartDate</mat-label>
+        <input matInput formControlName="startDate" [matDatepickerFilter]="dateFilter" [matDatepicker]="picker">
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
       <mat-form-field>
         <mat-label>Instructor</mat-label>
@@ -60,7 +69,7 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 })
 export class FormCourseComponent {
   patch = input<CourseDto | undefined | null>();
-  patch$ = toObservable(this.patch)
+  patch$ = toObservable(this.patch);
 
   users = input<UserDto[] | null>();
   compareUsers = (u1: UserDto, u2: UserDto) => u1?.id === u2?.id;
@@ -71,13 +80,24 @@ export class FormCourseComponent {
   form = inject(FormBuilder).group({
     name: [null as string | null, Validators.required],
     description: [null as string | null, Validators.required],
+    startDate: [null as Date | null, Validators.required],
     instructor: [null as UserDto | null, Validators.required],
   });
+
+  private today = new Date();
+  dateFilter = (d: Date | null): boolean => {
+    return d == null || d > this.today;
+  };
 
   constructor() {
     this.patch$.pipe(takeUntilDestroyed()).subscribe(patch => {
       this.form.markAsUntouched();
-      this.form.reset(patch as any);
+      this.form.reset({
+        name: patch?.name || null,
+        description: patch?.description || null,
+        startDate: patch?.startDate ? new Date(patch?.startDate) : null,
+        instructor: patch?.instructor || null,
+      });
     });
   }
 

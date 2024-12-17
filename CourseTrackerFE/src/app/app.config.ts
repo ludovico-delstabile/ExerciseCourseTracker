@@ -8,6 +8,7 @@ import { environment } from '../environments/environment';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { loadingInterceptor } from './core/interceptors/loading.interceptor';
+import { provideNativeDateAdapter } from '@angular/material/core';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -16,5 +17,6 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     provideHttpClient(withInterceptors([authInterceptor, loadingInterceptor])),
     importProvidersFrom(ApiModule.forRoot({ rootUrl: environment.apiUrl })),
+    provideNativeDateAdapter(),
   ]
 };
