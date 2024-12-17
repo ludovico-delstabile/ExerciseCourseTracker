@@ -16,6 +16,10 @@ import { AddCourse$Json$Params } from '../fn/courses/add-course-json';
 import { addCourse$Plain } from '../fn/courses/add-course-plain';
 import { AddCourse$Plain$Params } from '../fn/courses/add-course-plain';
 import { CourseDto } from '../models/course-dto';
+import { editCourse$Json } from '../fn/courses/edit-course-json';
+import { EditCourse$Json$Params } from '../fn/courses/edit-course-json';
+import { editCourse$Plain } from '../fn/courses/edit-course-plain';
+import { EditCourse$Plain$Params } from '../fn/courses/edit-course-plain';
 import { getCourses$Json } from '../fn/courses/get-courses-json';
 import { GetCourses$Json$Params } from '../fn/courses/get-courses-json';
 import { getCourses$Plain } from '../fn/courses/get-courses-plain';
@@ -117,6 +121,53 @@ export class CoursesService extends BaseService {
    */
   addCourse$Json(params?: AddCourse$Json$Params, context?: HttpContext): Observable<CourseDto> {
     return this.addCourse$Json$Response(params, context).pipe(
+      map((r: StrictHttpResponse<CourseDto>): CourseDto => r.body)
+    );
+  }
+
+  /** Path part for operation `editCourse()` */
+  static readonly EditCoursePath = '/api/Courses';
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `editCourse$Plain()` instead.
+   *
+   * This method sends `application/*+json` and handles request body of type `application/*+json`.
+   */
+  editCourse$Plain$Response(params?: EditCourse$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<CourseDto>> {
+    return editCourse$Plain(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `editCourse$Plain$Response()` instead.
+   *
+   * This method sends `application/*+json` and handles request body of type `application/*+json`.
+   */
+  editCourse$Plain(params?: EditCourse$Plain$Params, context?: HttpContext): Observable<CourseDto> {
+    return this.editCourse$Plain$Response(params, context).pipe(
+      map((r: StrictHttpResponse<CourseDto>): CourseDto => r.body)
+    );
+  }
+
+  /**
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `editCourse$Json()` instead.
+   *
+   * This method sends `application/*+json` and handles request body of type `application/*+json`.
+   */
+  editCourse$Json$Response(params?: EditCourse$Json$Params, context?: HttpContext): Observable<StrictHttpResponse<CourseDto>> {
+    return editCourse$Json(this.http, this.rootUrl, params, context);
+  }
+
+  /**
+   * This method provides access only to the response body.
+   * To access the full response (for headers, for example), `editCourse$Json$Response()` instead.
+   *
+   * This method sends `application/*+json` and handles request body of type `application/*+json`.
+   */
+  editCourse$Json(params?: EditCourse$Json$Params, context?: HttpContext): Observable<CourseDto> {
+    return this.editCourse$Json$Response(params, context).pipe(
       map((r: StrictHttpResponse<CourseDto>): CourseDto => r.body)
     );
   }

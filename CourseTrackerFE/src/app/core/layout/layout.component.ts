@@ -40,9 +40,6 @@ import { map } from 'rxjs';
         left: 0;
         width: 100%;
       }
-      .spacer {
-        flex: 1;
-      }
     }
     mat-drawer-container {
       flex: 1;

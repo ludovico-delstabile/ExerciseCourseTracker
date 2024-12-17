@@ -15,7 +15,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     MatToolbarModule,
   ],
   template: `
-    <mat-toolbar>Utenti</mat-toolbar>
     <mat-list>
       @for (user of users$ | async; track user) {
         <mat-list-item>

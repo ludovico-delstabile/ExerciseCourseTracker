@@ -8,17 +8,15 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { SubscriptionDto } from '../../models/subscription-dto';
+import { CourseDto } from '../../models/course-dto';
 
-export interface UpdateTrackedTime$Plain$Params {
-  subscriptionId: number;
-      body?: number
+export interface EditCourse$Plain$Params {
+      body?: CourseDto
 }
 
-export function updateTrackedTime$Plain(http: HttpClient, rootUrl: string, params: UpdateTrackedTime$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<SubscriptionDto>> {
-  const rb = new RequestBuilder(rootUrl, updateTrackedTime$Plain.PATH, 'patch');
+export function editCourse$Plain(http: HttpClient, rootUrl: string, params?: EditCourse$Plain$Params, context?: HttpContext): Observable<StrictHttpResponse<CourseDto>> {
+  const rb = new RequestBuilder(rootUrl, editCourse$Plain.PATH, 'patch');
   if (params) {
-    rb.path('subscriptionId', params.subscriptionId, {});
     rb.body(params.body, 'application/*+json');
   }
 
@@ -27,9 +25,9 @@ export function updateTrackedTime$Plain(http: HttpClient, rootUrl: string, param
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<SubscriptionDto>;
+      return r as StrictHttpResponse<CourseDto>;
     })
   );
 }
 
-updateTrackedTime$Plain.PATH = '/api/Subscriptions/{subscriptionId}/UpdateTrackedTime';
+editCourse$Plain.PATH = '/api/Courses';

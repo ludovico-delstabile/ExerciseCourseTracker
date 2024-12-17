@@ -10,14 +10,12 @@ import { RequestBuilder } from '../../request-builder';
 
 
 export interface UnsubscribeCourse$Params {
-  subscriptionId?: number;
-  subscriptionId: string;
+  subscriptionId: number;
 }
 
 export function unsubscribeCourse(http: HttpClient, rootUrl: string, params: UnsubscribeCourse$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
   const rb = new RequestBuilder(rootUrl, unsubscribeCourse.PATH, 'post');
   if (params) {
-    rb.query('subscriptionId', params.subscriptionId, {});
     rb.path('subscriptionId', params.subscriptionId, {});
   }
 
